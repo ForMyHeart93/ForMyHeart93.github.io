@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="这个地方不错的哟">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="ForMyHeart">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="OC runtime 总结"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="这个地方不错的哟" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="ForMyHeart的杂货铺"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+        <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>OC runtime 总结 - ForMyHeart的杂货铺</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+
+
+    <!-- favicon -->
+    
+	
+</head>
+
+
+<body>
+
+    <!-- Menu -->
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Configurable Title</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    <li>
+                        <a href="/">
+                            
+                                Home
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/archives">
+                            
+                                Archives
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/tags">
+                            
+                                Tags
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="/categories">
+                            
+                                Categories
+                            
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a href="https://github.com/klugjo/hexo-theme-clean-blog">
+                            
+                                <i class="fa fa-github fa-stack-2x"></i>
+                            
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+    <!-- Main Content -->
+    <!-- Page Header -->
+<!-- Set your background image for this header in your post front-matter: cover -->
+
+<header class="intro-header" style="background-image: url('http://www.codeblocq.com/assets/projects/hexo-theme-clean-blog/img/home-bg.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>OC runtime 总结</h1>
+                    
+                    <span class="meta">
+                        <!-- Date and Author -->
+                        
+                        
+                            2017-06-23
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Tags and categories -->
+           
+
+            <!-- Gallery -->
+            
+
+            <!-- Post Main Content -->
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p>OC 中本身就有一个黑魔法，那就是runtime，各式各样的资料有好多，有的晦涩难懂，我就试着总结下自己学到的东西</p>
+<h2 id="什么是runtime？"><a href="#什么是runtime？" class="headerlink" title="什么是runtime？"></a>什么是runtime？</h2><p>runtime 是 OC底层的一套C语言的API（引入 <objc runtime.h=""> 或<objc message.h="">），编译器最终都会将OC代码转化为运行时代码，通过终端命令编译.m 文件：clang -rewrite-objc xxx.m可以看到编译后的xxx.cpp（C++文件）。比如我们创建了一个对象 [[NSObject alloc]init]，最终被转换为几万行代码，截取最关键的一句可以看到底层是通过runtime创建的对象</objc></objc></p>
+<p>另外利用runtime 可以做一些OC不容易实现的功能</p>
+<p>   <em>动态交换两个方法的实现（特别是交换系统自带的方法）
+   </em>动态添加对象的成员变量和成员方法<br>   *获得某个类的所有成员方法、所有成员变量</p>
+<h2 id="如何应用运行时？"><a href="#如何应用运行时？" class="headerlink" title="如何应用运行时？"></a>如何应用运行时？</h2><p>1.将某些OC代码转为运行时代码，探究底层，比如block的实现原理（上边已讲到）；<br>2.拦截系统自带的方法调用（Swizzle 黑魔法），比如拦截imageNamed:、viewDidLoad、alloc；<br>3.实现分类也可以增加属性；<br>4.实现NSCoding的自动归档和自动解档；<br>5.实现字典和模型的自动转换。</p>
+<h2 id="下面我通过demo-我一个个来讲解"><a href="#下面我通过demo-我一个个来讲解" class="headerlink" title="下面我通过demo 我一个个来讲解"></a>下面我通过demo 我一个个来讲解</h2><h3 id="一、交换两个方法的实现，拦截系统自带的方法调用功能"><a href="#一、交换两个方法的实现，拦截系统自带的方法调用功能" class="headerlink" title="一、交换两个方法的实现，拦截系统自带的方法调用功能"></a>一、交换两个方法的实现，拦截系统自带的方法调用功能</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">需要用到的方法 &lt;objc/runtime.h&gt;</div><div class="line"></div><div class="line">获得某个类的类方法</div><div class="line">Method class_getClassMethod(Class cls , SEL name)</div><div class="line">获得某个类的实例对象方法</div><div class="line">Method class_getInstanceMethod(Class cls , SEL name)</div><div class="line">交换两个方法的实现</div><div class="line">void method_exchangeImplementations(Method m1 , Method m2)</div></pre></td></tr></table></figure>
+<h3 id="案例1：方法简单的交换"><a href="#案例1：方法简单的交换" class="headerlink" title="案例1：方法简单的交换"></a>案例1：方法简单的交换</h3><p>创建一个Person类，类中实现以下两个类方法，并在.h 文件中声明</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">+ (void)run &#123;</div><div class="line">NSLog(@<span class="string">"跑"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">+ (void)study &#123;</div><div class="line">NSLog(@<span class="string">"学习"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>控制器中调用，则先打印跑，后打印学习</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[Person run];</div><div class="line">[Person study];</div></pre></td></tr></table></figure>
+<p>下面通过runtime 实现方法交换，类方法用class_getClassMethod ，对象方法用class_getInstanceMethod</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 获取两个类的类方法</div><div class="line">Method m1 = class_getClassMethod([Person class], @selector(run));</div><div class="line">Method m2 = class_getClassMethod([Person class], @selector(study));</div><div class="line">// 开始交换方法实现</div><div class="line">method_exchangeImplementations(m1, m2);</div><div class="line">// 交换后，先打印学习，再打印跑！</div><div class="line">[Person run];</div><div class="line">[Person study];</div></pre></td></tr></table></figure>
+<h3 id="案例2：拦截系统方法"><a href="#案例2：拦截系统方法" class="headerlink" title="案例2：拦截系统方法"></a>案例2：拦截系统方法</h3><p>需求：比如iOS6 升级 iOS7 后需要版本适配，根据不同系统使用不同样式图片（拟物化和扁平化），如何通过不去手动一个个修改每个UIImage的imageNamed：方法就可以实现为该方法中加入版本判断语句？</p>
+<p>步骤：<br>1、为UIImage建一个分类（UIImage+Category）<br>2、在分类中实现一个自定义方法，方法中写要在系统方法中加入的语句，比如版本判断</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">+ (UIImage *)xh_imageNamed:(NSString *)name &#123;</div><div class="line">double version = [[UIDevice currentDevice].systemVersion doubleValue];</div><div class="line"><span class="keyword">if</span> (version &gt;= 7.0) &#123;</div><div class="line">// 如果系统版本是7.0以上，使用另外一套文件名结尾是‘_os7’的扁平化图片</div><div class="line">name = [name stringByAppendingString:@<span class="string">"_os7"</span>];</div><div class="line">&#125;</div><div class="line"><span class="built_in">return</span> [UIImage xh_imageNamed:name];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>3、分类中重写UIImage的load方法，实现方法的交换（只要能让其执行一次方法交换语句，load再合适不过了）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">+ (void)load &#123;</div><div class="line">// 获取两个类的类方法</div><div class="line">Method m1 = class_getClassMethod([UIImage class], @selector(imageNamed:));</div><div class="line">Method m2 = class_getClassMethod([UIImage class], @selector(xh_imageNamed:));</div><div class="line">// 开始交换方法实现</div><div class="line">method_exchangeImplementations(m1, m2);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意：自定义方法中最后一定要再调用一下系统的方法，让其有加载图片的功能，但是由于方法交换，系统的方法名已经变成了我们自定义的方法名（有点绕，就是用我们的名字能调用系统的方法，用系统的名字能调用我们的方法），这就实现了系统方法的拦截！</p>
+<p>利用以上思路，我们还可以给 NSObject 添加分类，统计创建了多少个对象，给控制器添加分类，统计有创建了多少个控制器，特别是公司需求总变的时候，在一些原有控件或模块上添加一个功能，建议使用该方法！</p>
+<h3 id="二、在分类中设置属性，给任何一个对象设置属性"><a href="#二、在分类中设置属性，给任何一个对象设置属性" class="headerlink" title="二、在分类中设置属性，给任何一个对象设置属性"></a>二、在分类中设置属性，给任何一个对象设置属性</h3><p>众所周知，分类中是无法设置属性的，如果在分类的声明中写@property 只能为其生成get 和 set 方法的声明，但无法生成成员变量，就是虽然点语法能调用出来，但程序执行后会crash，有人会想到使用全局变量呢？比如这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">+ (void)load &#123;</div><div class="line">int _age;</div><div class="line"></div><div class="line">- (int )age &#123;</div><div class="line"><span class="built_in">return</span> _age;</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (void)setAge:(int)age &#123;</div><div class="line">_age = age;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>但是全局变量程序整个执行过程中内存中只有一份，我们创建多个对象修改其属性值都会修改同一个变量，这样就无法保证像属性一样每个对象都拥有其自己的属性值。这时我们就需要借助runtime为分类增加属性的功能了。</p>
+<p>需要用到的方法 <objc runtime.h=""></objc></p>
+<p>set方法，将值value 跟对象object 关联起来（将值value 存储到对象object 中）<br>参数 object：给哪个对象设置属性<br>参数 key：一个属性对应一个Key，将来可以通过key取出这个存储的值，key 可以是任何类型：double、int 等，建议用char 可以节省字节<br>参数 value：给属性设置的值<br>参数policy：存储策略 （assign 、copy 、 retain就是strong）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">void objc_setAssociatedObject(id object , const void *key ,id value ,objc_AssociationPolicy policy)</div></pre></td></tr></table></figure></p>
+<p>利用参数key 将对象object中存储的对应值取出来<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">id objc_getAssociatedObject(id object , const void *key)</div></pre></td></tr></table></figure></p>
+<p>步骤：<br>1、创建一个分类，比如给任何一个对象都添加一个name属性，就是NSObject添加分类（NSObject+Category）<br>2、先在.h 中@property 声明出get 和 set 方法，方便点语法调用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">@property(nonatomic,copy)NSString *name;</div></pre></td></tr></table></figure></p>
+<p>3、在.m 中重写set 和 get 方法，内部利用runtime 给属性赋值和取值</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">char nameKey;</div><div class="line"></div><div class="line">- (void)setName:(NSString *)name &#123;</div><div class="line">// 将某个值跟某个对象关联起来，将某个值存储到某个对象中</div><div class="line">objc_setAssociatedObject(self, &amp;nameKey, name, OBJC_ASSOCIATION_COPY_NONATOMIC);</div><div class="line">&#125;</div><div class="line"></div><div class="line">- (NSString *)name &#123;</div><div class="line"><span class="built_in">return</span> objc_getAssociatedObject(self, &amp;nameKey);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+
+                
+            </div>
+
+            <!-- Comments -->
+            
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    
+
+
+                </div>
+            
+        </div>
+    </div>
+</article>
+
+    <!-- Footer -->
+    <hr />
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+
+                    
+
+                    
+                        <li>
+                            <a href="https://github.com/klugjo/hexo-theme-clean-blog" target="_blank">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    
+
+                    
+
+                    
+
+                    
+                </ul>
+                <p class="copyright text-muted">&copy; 2017 ForMyHeart<br></p>
+                <p class="copyright text-muted">Original Theme <a target="_blank" href="http://startbootstrap.com/template-overviews/clean-blog/">Clean Blog</a> from <a href="http://startbootstrap.com/" target="_blank">Start Bootstrap</a></p>
+                <p class="copyright text-muted">Adapted for <a target="_blank" href="https://hexo.io/">Hexo</a> by <a href="http://www.codeblocq.com/" target="_blank">Jonathan Klughertz</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>
